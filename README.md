@@ -4,4 +4,4 @@
 - Django (python 3.12.1)
 ## 서버 배포 환경
 - AWS EC2, RDS
-- Ubuntu OS
+- Ubuntu OS (22.04)

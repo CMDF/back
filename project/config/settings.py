@@ -59,7 +59,19 @@ PROJECT_APPS = [
 
 THIRD_PARTY_APPS = [
     "corsheaders",
+    # DRF를 위한 패키지
     "rest_framework",
+    # JWT를 위한 패키지
+    'rest_framework_simplejwt',
+    # OAuth를 위한 패키지
+    "allauth",
+    "allauth.account",
+    "allauth.socialaccount",
+    "allauth.socialaccount.providers.google",
+    # 다양한 스토리지를 사용하기 위한 패키지
+    "storages",
+    # swagger를 위한 패키지
+    "drf_yasg",
 ]
 
 INSTALLED_APPS = DJANGO_APPS + PROJECT_APPS + THIRD_PARTY_APPS
@@ -73,6 +85,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    "allauth.account.middleware.AccountMiddleware", # allauth 미들웨어
 ]
 
 ROOT_URLCONF = 'config.urls'

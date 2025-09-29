@@ -40,7 +40,8 @@ DJANGO_APPS = [
 PROJECT_APPS = [
     'accounts',
     'documents',
-    'pdf_figures'
+    'pdf_figures',
+    'highlights'
 ]
 
 THIRD_PARTY_APPS = [

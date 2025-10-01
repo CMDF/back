@@ -23,6 +23,7 @@ urlpatterns = [
     # 앱 라우팅 (accounts 내부에서 로그인/회원가입/JWT 모두 처리)
     path("api/accounts/", include("accounts.urls")),
     path("api/highlights/", include("highlights.urls")),
+    path("api/pdf_documents/", include("pdf_documents.urls")),
     path("api/pdf_figures/", include("pdf_figures.urls")),
 
     # Swagger / OpenAPI

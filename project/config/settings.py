@@ -95,6 +95,9 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'config.wsgi.application'
 
+# Custom User Model
+AUTH_USER_MODEL = 'accounts.User'
+
 
 # Database (로컬 테스트 용)
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases

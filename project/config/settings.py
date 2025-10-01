@@ -59,6 +59,8 @@ THIRD_PARTY_APPS = [
     "storages",
     # swagger를 위한 패키지
     "drf_yasg",
+
+    "rest_framework_simplejwt.token_blacklist"
 ]
 
 INSTALLED_APPS = DJANGO_APPS + PROJECT_APPS + THIRD_PARTY_APPS

@@ -39,6 +39,7 @@ DJANGO_APPS = [
 
 PROJECT_APPS = [
     'accounts',
+    'pdf_documents',
     'pdf_figures',
     'highlights'
 ]

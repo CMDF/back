@@ -1,44 +1,74 @@
+# project/accounts/admin.py
+
 from django.contrib import admin
-from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
-from django import forms
+from django.contrib.auth.admin import UserAdmin
 from .models import User
 
-class UserCreationForm(forms.ModelForm):
-    password1 = forms.CharField(widget=forms.PasswordInput)
-    password2 = forms.CharField(widget=forms.PasswordInput)
-    class Meta:
-        model = User
-        fields = ("username", "email")
-    def clean(self):
-        cleaned = super().clean()
-        if cleaned.get("password1") != cleaned.get("password2"):
-            self.add_error("password2", "비밀번호가 일치하지 않습니다.")
-        return cleaned
-    def save(self, commit=True):
-        user = super().save(commit=False)
-        user.set_password(self.cleaned_data["password1"])
-        if commit:
-            user.save()
-        return user
-
-class UserChangeForm(forms.ModelForm):
-    class Meta:
-        model = User
-        fields = ("username", "email", "is_active", "is_staff", "is_superuser")
-
+# User 모델을 admin 사이트에 등록
 @admin.register(User)
-class UserAdmin(BaseUserAdmin):
-    add_form = UserCreationForm
-    form = UserChangeForm
-    model = User
-    list_display = ("user_id", "username", "email", "is_staff", "is_active")
-    ordering = ("user_id",)
+class CustomUserAdmin(UserAdmin):
+    """
+    Custom User Admin 정의
+    UserAdmin을 상속받아 email 기반으로 수정
+    """
+    
+    # 관리자 페이지 목록에 보여줄 필드
+    # (UserAdmin의 기본 list_display에서 first_name, last_name 제외)
+    list_display = (
+        "email", 
+        "username", 
+        "field", 
+        "is_active", 
+        "is_staff", 
+        "date_joined"
+    )
+    
+    # 목록에서 링크로 사용할 필드 (기본값: 첫 번째 필드)
+    list_display_links = ("email", "username")
+
+    # 검색 필드
+    # (UserAdmin의 기본값 'username', 'first_name', 'last_name', 'email'에서 수정)
+    search_fields = ("email", "username")
+
+    # 정렬 기준 (UserAdmin의 기본값 'username'에서 'email'로 변경)
+    ordering = ("email",)
+
+    # 필터 옵션
+    list_filter = ("is_active", "is_staff", "is_superuser", "groups")
+
+    # '사용자 수정' 페이지에서 보여줄 필드 구성
+    # (UserAdmin의 fieldsets를 email 기반으로 재정의)
     fieldsets = (
-        (None, {"fields": ("username", "email", "password")}),
-        ("Permissions", {"fields": ("is_active", "is_staff", "is_superuser", "groups", "user_permissions")}),
+        # (섹션 제목, {'fields': (필드 목록,)})
+        (None, {"fields": ("email", "password")}), # 'None'은 섹션 제목 없음을 의미
+        ("Personal info", {"fields": ("username", "field")}), # 우리 모델의 커스텀 필드
+        (
+            "Permissions",
+            {
+                "fields": (
+                    "is_active",
+                    "is_staff",
+                    "is_superuser",
+                    "groups",
+                    "user_permissions",
+                ),
+            },
+        ),
         ("Important dates", {"fields": ("last_login", "date_joined")}),
     )
+
+    # '사용자 추가' 페이지에서 보여줄 필드 구성
+    # (UserAdmin의 add_fieldsets를 email 기반으로 재정의)
     add_fieldsets = (
-        (None, {"classes": ("wide",),
-                "fields": ("username", "email", "password1", "password2", "is_staff", "is_superuser", "is_active")}),
+        (
+            None,
+            {
+                "classes": ("wide",),
+                # email(ID), username(REQUIRED_FIELD), password
+                "fields": ("email", "username", "password", "password2"), 
+            },
+        ),
     )
+    
+    # groups와 user_permissions 필드를 수평으로 표시
+    filter_horizontal = ("groups", "user_permissions")

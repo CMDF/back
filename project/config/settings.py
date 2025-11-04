@@ -1,7 +1,7 @@
 from pathlib import Path
-from pathlib import Path
 import os, json
 from django.core.exceptions import ImproperlyConfigured
+from datetime import timedelta
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -53,11 +53,13 @@ THIRD_PARTY_APPS = [
     'rest_framework_simplejwt',
 
     "dj_rest_auth",
+    "dj_rest_auth.registration",
     # OAuth를 위한 패키지
     "allauth",
     "allauth.account",
     "allauth.socialaccount",
     "allauth.socialaccount.providers.google",
+
     # 다양한 스토리지를 사용하기 위한 패키지
     "storages",
     # swagger를 위한 패키지
@@ -177,12 +179,34 @@ REST_FRAMEWORK = {
     )
 }
 
-REST_USE_JWT = True
+# REST_USE_JWT = True
 
-# JWT가 HTTP 헤더가 아닌 쿠키를 통해 전송되도록 설정 (API 서버-클라이언트 방식이므로 False)
-# dj-rest-auth 기본값은 False이지만 명시적으로 설정
-JWT_AUTH_COOKIE = None 
-JWT_AUTH_REFRESH_COOKIE = None
+# REST_AUTH_TOKEN_MODEL = None
+
+# # JWT가 HTTP 헤더가 아닌 쿠키를 통해 전송되도록 설정 (API 서버-클라이언트 방식이므로 False)
+# # dj-rest-auth 기본값은 False이지만 명시적으로 설정
+# JWT_AUTH_COOKIE = None 
+# JWT_AUTH_REFRESH_COOKIE = None
+
+# ----- dj-rest-auth v5 설정 -----
+REST_AUTH = {
+    # 토큰 모델을 끄면 authtoken을 요구하지 않음
+    'TOKEN_MODEL': None,
+    'REST_SESSION_LOGIN': False,
+    # JWT 사용
+    'USE_JWT': True,
+
+    # (쿠키를 안 쓸 거면 None 유지)
+    # 'JWT_AUTH_COOKIE': None,
+    # 'JWT_AUTH_REFRESH_COOKIE': None,
+
+    "JWT_AUTH_COOKIE": "access_token",
+    "JWT_AUTH_REFRESH_COOKIE": "refresh_token",
+    "JWT_AUTH_HTTPONLY": False,
+    # 필요하면 여기에 다른 옵션들도 REST_AUTH 안에 넣습니다.
+}
+
+
 
 # allauth가 사용하는 기본 사이트 ID. (django.contrib.sites 앱이 필요함)
 # DJANGO_APPS에 'django.contrib.sites'를 추가해야 합니다.
@@ -217,6 +241,7 @@ SOCIALACCOUNT_PROVIDERS = {
             'secret': get_secret("GOOGLE_CLIENT_SECRET"),
         },
         'SCOPE': [ # Google로부터 요청할 사용자 정보 범위
+            'openid',
             'profile',
             'email',
         ],
@@ -224,4 +249,21 @@ SOCIALACCOUNT_PROVIDERS = {
             'access_type': 'offline',
         }
     }
+}
+
+
+SIMPLE_JWT = {
+    # 1. 우리가 사용할 기본 키 필드 지정 (기본값: 'id')
+    'USER_ID_FIELD': 'user_id',
+    
+    # 2. JWT 토큰의 "user_id" 클레임 이름 (기본값: 'user_id')
+    'USER_ID_CLAIM': 'user_id', # 이것도 user_id로 명시
+
+    # 3. 토큰 유효 시간 설정 (선택 사항이지만 권장)
+    'ACCESS_TOKEN_LIFETIME': timedelta(hours=1),   # Access Token 유효 시간 (예: 1시간)
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=7),    # Refresh Token 유효 시간 (예: 7일)
+    
+    # 4. 기타 설정
+    'AUTH_HEADER_TYPES': ('Bearer',), # 인증 헤더 타입 (Bearer <token>)
+    'AUTH_HEADER_NAME': 'HTTP_AUTHORIZATION', # 인증 헤더 이름
 }

@@ -35,6 +35,7 @@ DJANGO_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites'
 ]
 
 PROJECT_APPS = [
@@ -50,6 +51,8 @@ THIRD_PARTY_APPS = [
     "rest_framework",
     # JWT를 위한 패키지
     'rest_framework_simplejwt',
+
+    "dj_rest_auth",
     # OAuth를 위한 패키지
     "allauth",
     "allauth.account",
@@ -164,6 +167,61 @@ CORS_ALLOW_CREDENTIALS = True
 # 3000 포트는 프론트엔드 React 애플리케이션의 포트 번호
 # 추후 프론트엔드에서 웹 페이지 배포 후 도메인 매핑했다면 해당 도메인 추가 필요
 CORS_ALLOWED_ORIGINS = [ 
-    "http://localhost:3000",
-    "http://127.0.0.1:3000",
 ]
+
+# DRF (Django Rest Framework) 설정
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        # API 요청 시 인증을 위해 'simplejwt'의 JWT 인증을 사용
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    )
+}
+
+REST_USE_JWT = True
+
+# JWT가 HTTP 헤더가 아닌 쿠키를 통해 전송되도록 설정 (API 서버-클라이언트 방식이므로 False)
+# dj-rest-auth 기본값은 False이지만 명시적으로 설정
+JWT_AUTH_COOKIE = None 
+JWT_AUTH_REFRESH_COOKIE = None
+
+# allauth가 사용하는 기본 사이트 ID. (django.contrib.sites 앱이 필요함)
+# DJANGO_APPS에 'django.contrib.sites'를 추가해야 합니다.
+SITE_ID = 1
+
+# allauth 관련 설정
+# ------------------------------------------------
+# 인증 백엔드: Django 기본 인증 + allauth 이메일 인증
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend', # Django 기본 인증
+    'allauth.account.auth_backends.AuthenticationBackend', # allauth 인증
+)
+
+# 소셜 로그인 시 이메일 주소는 필수로 받음
+SOCIALACCOUNT_EMAIL_REQUIRED = True
+# 소셜 로그인 시 사용자에게 별도로 이메일 확인을 받지 않음 (개발 편의성)
+ACCOUNT_EMAIL_VERIFICATION = 'none' 
+# 사용자 이름(username) 대신 이메일을 ID로 사용
+ACCOUNT_AUTHENTICATION_METHOD = 'email'
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_USERNAME_REQUIRED = False # username 필드를 사용하지 않음
+ACCOUNT_USER_MODEL_USERNAME_FIELD = None # username 필드를 사용하지 않음
+
+
+# Google 소셜 로그인 관련 설정
+# ------------------------------------------------
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        'APP': {
+            # 🔑 이 부분은 secrets.json에서 불러오도록 수정하세요.
+            'client_id': get_secret("GOOGLE_CLIENT_ID"),
+            'secret': get_secret("GOOGLE_CLIENT_SECRET"),
+        },
+        'SCOPE': [ # Google로부터 요청할 사용자 정보 범위
+            'profile',
+            'email',
+        ],
+        'AUTH_PARAMS': {
+            'access_type': 'offline',
+        }
+    }
+}

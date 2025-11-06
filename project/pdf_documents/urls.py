@@ -1,9 +1,8 @@
 from django.urls import path
-from . import views
+from pdf_documents.views import *
 
 app_name = "pdf_documents"
 
 urlpatterns = [
-    # 준비가 안 됐다면 일단 빈 리스트도 OK
-    # path("", views.some_view, name="index"),
+    path('upload/', PDFUploadView.as_view(), name='pdf-upload'),
 ]

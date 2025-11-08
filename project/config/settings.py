@@ -108,7 +108,6 @@ AUTH_USER_MODEL = 'accounts.User'
 
 # Database (로컬 테스트 용)
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
-DB_PW = get_secret("DB_PW")
 RDS_HOST = get_secret("RDS_HOST")
 RDS_PORT = get_secret("RDS_PORT")
 RDS_DB_NAME = get_secret("RDS_DB_NAME")

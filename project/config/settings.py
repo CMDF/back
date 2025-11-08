@@ -281,3 +281,16 @@ AWS_S3_CUSTOM_DOMAIN = f"{AWS_STORAGE_BUCKET_NAME}.s3.{AWS_REGION}.amazonaws.com
 AWS_S3_OBJECT_PARAMETERS = {
     'CacheControl': 'max-age=86400',
 }
+
+
+SWAGGER_SETTINGS = {
+    "SECURITY_DEFINITIONS": {
+        "Bearer": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header",
+            "description": 'JWT 토큰 입력. 예) "Bearer <access_token>"',
+        }
+    },
+    "USE_SESSION_AUTH": False,  # 세션 인증 버튼 비표시 (JWT만 쓸 때 권장)
+}

@@ -11,7 +11,7 @@ import boto3
 import os
 import uuid
 
-from .serializers import OriginPDFSerializer
+from .serializers import OriginPDFSerializer, PDFUploadSerializer
 from .models import originPDF
 
 from drf_yasg.utils import swagger_auto_schema
@@ -24,28 +24,16 @@ class PDFUploadView(APIView):
     @swagger_auto_schema(
         operation_summary="PDF 업로드",
         operation_description=(
-            "S3로 PDF를 업로드하고 메타데이터(DB)에 저장합니다.\n\n"
+            "S3로 PDF를 업로드하고 메타데이터(DB)에 저장합니다.\n"
             "- Content-Type: multipart/form-data\n"
             "- 필드: `title`(text), `file`(file)\n"
             "- 인증: Authorization: Bearer <access_token>"
         ),
         tags=["PDF Documents"],
         security=[{"Bearer": []}],
-        request_body=openapi.Schema(
-            type=openapi.TYPE_OBJECT,
-            required=["file"],
-            properties={
-                "title": openapi.Schema(type=openapi.TYPE_STRING, description="제목", example="중간보고서"),
-                # drf_yasg에서 파일은 다음과 같이 표기
-                "file": openapi.Schema(type=openapi.TYPE_STRING, format="binary", description="PDF 파일"),
-            },
-        ),
-        responses={
-            201: openapi.Response("Created", schema=OriginPDFSerializer),
-            400: "잘못된 요청(파일 누락 등)",
-            403: "권한/버킷 정책 문제로 S3 업로드 실패",
-            500: "서버 오류(DB 저장 실패 등)",
-        },
+        consumes=["multipart/form-data"],
+        request_body=PDFUploadSerializer,
+        responses={201: OriginPDFSerializer, 400: "잘못된 요청", 403: "권한/버킷", 500: "서버 오류"},
     )
     def post(self, request, *args, **kwargs):
         # 1) 입력 검증

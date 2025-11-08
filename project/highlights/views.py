@@ -53,8 +53,8 @@ class TagAPIView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
     @swagger_auto_schema(
-        operation_id="listTags",
-        operation_description="모든 Tag 목록을 조회합니다.",
+        operation_id="getTags",
+        operation_description="PDF에 연결된 Tag 목록을 조회합니다.",
         tags=["Tag"],
         manual_parameters=[auth_header],
         responses={
@@ -63,8 +63,11 @@ class TagAPIView(APIView):
         },
     )
     def get(self, request, *args, **kwargs):
-        tags = Tag.objects.all()
-        serializer = TagSerializer(tags, many=True)
+        pdf_id = request.query_params.get("pdf_id")
+        qs = Tag.objects.all()
+        if pdf_id is not None:
+            qs = qs.filter(pdf_id=pdf_id)
+        serializer = TagSerializer(qs, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     
     @swagger_auto_schema(

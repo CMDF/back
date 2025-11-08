@@ -1,10 +1,10 @@
-# highlights/urls.py
 from django.urls import path
-from . import views
+from highlights.views import *
 
 app_name = "highlights"
 
 urlpatterns = [
-    # 준비가 안 됐다면 일단 빈 리스트도 OK
-    # path("", views.some_view, name="index"),
+    path("tags/", TagAPIView.as_view(), name="tag_api"),
+    path("tags/<int:pk>/", TagAPIView.as_view(), name="tag_detail_api"),
 ]
+

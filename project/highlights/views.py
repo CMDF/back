@@ -10,22 +10,22 @@ from .serializers import TagSerializer
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 
-# 공통 헤더 파라미터 (JWT)
-auth_header = openapi.Parameter(
-    name="Authorization",
-    in_=openapi.IN_HEADER,
-    description='JWT 토큰. 예) "Bearer <access_token>"',
-    type=openapi.TYPE_STRING,
-    required=True,
-)
-# pk path 파라미터 (디테일 전용)
-pk_param = openapi.Parameter(
-    name="pk",
-    in_=openapi.IN_PATH,
-    description="Tag 기본키(ID)",
-    type=openapi.TYPE_INTEGER,
-    required=True,
-)
+# # 공통 헤더 파라미터 (JWT)
+# auth_header = openapi.Parameter(
+#     name="Authorization",
+#     in_=openapi.IN_HEADER,
+#     description='JWT 토큰. 예) "Bearer <access_token>"',
+#     type=openapi.TYPE_STRING,
+#     required=True,
+# )
+# # pk path 파라미터 (디테일 전용)
+# pk_param = openapi.Parameter(
+#     name="pk",
+#     in_=openapi.IN_PATH,
+#     description="Tag 기본키(ID)",
+#     type=openapi.TYPE_INTEGER,
+#     required=True,
+# )
 
 class TagListCreateAPIView(APIView):
     permission_classes = [IsAuthenticated]
@@ -34,7 +34,6 @@ class TagListCreateAPIView(APIView):
         operation_id="getTags",
         operation_description="PDF에 연결된 Tag 목록을 조회합니다. ?pdf_id= 로 필터링 가능",
         tags=["Tag"],
-        manual_parameters=[auth_header],
         responses={200: TagSerializer(many=True), 401: openapi.Response("Unauthorized")},
     )
     def get(self, request):
@@ -48,7 +47,6 @@ class TagListCreateAPIView(APIView):
         operation_id="createTag",
         operation_description="새로운 Tag를 생성합니다.",
         tags=["Tag"],
-        manual_parameters=[auth_header],
         request_body=TagSerializer,
         responses={201: TagSerializer, 400: openapi.Response("Invalid data"), 401: openapi.Response("Unauthorized")},
     )
@@ -67,7 +65,6 @@ class TagDetailAPIView(APIView):
         operation_id="updateTag",
         operation_description="특정 Tag를 부분 업데이트합니다(Partial Update).",
         tags=["Tag"],
-        manual_parameters=[auth_header, pk_param],
         request_body=TagSerializer,
         responses={
             200: TagSerializer,
@@ -92,7 +89,6 @@ class TagDetailAPIView(APIView):
         operation_id="deleteTag",
         operation_description="특정 Tag를 삭제합니다.",
         tags=["Tag"],
-        manual_parameters=[auth_header, pk_param],
         responses={204: openapi.Response("No Content"), 401: openapi.Response("Unauthorized"), 404: openapi.Response("Tag not found.")},
     )
     def delete(self, request, pk):

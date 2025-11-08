@@ -188,6 +188,8 @@ CORS_ALLOW_CREDENTIALS = True
 # 3000 포트는 프론트엔드 React 애플리케이션의 포트 번호
 # 추후 프론트엔드에서 웹 페이지 배포 후 도메인 매핑했다면 해당 도메인 추가 필요
 CORS_ALLOWED_ORIGINS = [ 
+    "http://localhost:8000",
+    "http://127.0.0.1:8000",
 ]
 
 # DRF (Django Rest Framework) 설정

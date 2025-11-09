@@ -1,5 +1,4 @@
-# project/accounts/models.py (수정됨)
-
+# project/accounts/models.py
 from django.db import models
 from django.db.models import Q, UniqueConstraint
 from django.db.models.functions import Lower

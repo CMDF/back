@@ -1,5 +1,4 @@
-# project/accounts/views.py (수정됨)
-
+# project/accounts/views.py
 from django.contrib.auth import get_user_model
 from rest_framework import permissions, status
 from rest_framework.response import Response
@@ -16,7 +15,6 @@ from .serializers import (
 )
 
 User = get_user_model()
-
 
 class MeView(RetrieveUpdateAPIView):
     """
@@ -48,7 +46,7 @@ class LogoutView(APIView):
         try:
             token = RefreshToken(refresh_token)
             token.blacklist()
-            return Response(status=status.HTTP_205_RESET_CONTENT) # 👈 성공 시 205
+            return Response(status=status.HTTP_205_RESET_CONTENT)
         except Exception as e:
             return Response({"detail": f"토큰 블랙리스트 처리 실패: {e}"},
                             status=status.HTTP_400_BAD_REQUEST)

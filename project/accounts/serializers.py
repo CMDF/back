@@ -1,7 +1,5 @@
-# project/accounts/serializers.py (수정됨)
-
+# project/accounts/serializers.py
 from django.contrib.auth import get_user_model
-# 🚨 [삭제] password_validation, Q
 from rest_framework import serializers
 
 User = get_user_model()
@@ -38,7 +36,3 @@ class ProfileUpdateSerializer(serializers.ModelSerializer):
         if qs.exists():
             raise serializers.ValidationError("이미 사용 중인 username입니다.")
         return v
-
-# (만약 '비밀번호 설정' 기능을 추가하고 싶다면, 'old_password'가 없는 
-# 'SetPasswordSerializer'를 만들어야 함)
-# ...

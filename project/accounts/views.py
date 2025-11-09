@@ -78,7 +78,14 @@ class MeView(RetrieveUpdateAPIView):
         return self.request.user
 
 
-@swagger_auto_schema(
+class LogoutView(APIView):
+    """
+    (유지) dj-rest-auth가 발급한 refresh 토큰을 받아 블랙리스트 처리
+    """
+    permission_classes = [permissions.IsAuthenticated]
+
+    
+    @swagger_auto_schema(
     method="post",
     operation_summary="로그아웃(Refresh 블랙리스트)",
     tags=["Accounts"],
@@ -91,13 +98,7 @@ class MeView(RetrieveUpdateAPIView):
                               }}),
         401: openapi.Response("인증 필요", ErrorDetailSchema),
     }
-)
-class LogoutView(APIView):
-    """
-    (유지) dj-rest-auth가 발급한 refresh 토큰을 받아 블랙리스트 처리
-    """
-    permission_classes = [permissions.IsAuthenticated]
-
+    )
     def post(self, request):
         refresh_token = request.data.get("refresh")
         if not refresh_token:
@@ -112,8 +113,7 @@ class LogoutView(APIView):
                             status=status.HTTP_400_BAD_REQUEST)
 
 
-@swagger_auto_schema(
-    method="post",
+@method_decorator(name="post", decorator=swagger_auto_schema(
     operation_summary="Google ID Token 로그인/회원가입",
     tags=["Accounts"],
     request_body=GoogleIdTokenSerializer,
@@ -129,7 +129,7 @@ class LogoutView(APIView):
         400: openapi.Response("토큰 검증 실패 또는 요청 오류", ErrorDetailSchema),
         500: openapi.Response("서버 오류", ErrorDetailSchema),
     }
-)
+))
 class GoogleLogin(SocialLoginView):
     """
     iOS 앱에서 받은 Google ID Token을 처리하여 Django 유저로 로그인/회원가입

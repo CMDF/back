@@ -86,7 +86,6 @@ class LogoutView(APIView):
 
     
     @swagger_auto_schema(
-    method="post",
     operation_summary="로그아웃(Refresh 블랙리스트)",
     tags=["Accounts"],
     request_body=RefreshTokenInputSerializer,

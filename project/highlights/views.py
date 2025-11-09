@@ -63,7 +63,7 @@ class TagDetailAPIView(APIView):
 
     @swagger_auto_schema(
         operation_id="updateTag",
-        operation_description="특정 Tag를 부분 업데이트합니다(Partial Update).",
+        operation_description="특정 Tag를 부분 업데이트합니다(Partial Update, Tag의 pk를 파라미터로 삽입).",
         tags=["Tag"],
         request_body=TagSerializer,
         responses={
@@ -87,7 +87,7 @@ class TagDetailAPIView(APIView):
 
     @swagger_auto_schema(
         operation_id="deleteTag",
-        operation_description="특정 Tag를 삭제합니다.",
+        operation_description="특정 Tag를 삭제합니다(Tag의 pk를 파라미터로 삽입).",
         tags=["Tag"],
         responses={204: openapi.Response("No Content"), 401: openapi.Response("Unauthorized"), 404: openapi.Response("Tag not found.")},
     )

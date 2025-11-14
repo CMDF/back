@@ -1,5 +1,5 @@
 from django.db import models
-from pdf_documents.models import *
+from pdf_documents.models import PDFpage
 
 class PDFfigure(models.Model):
     page_id = models.ForeignKey(PDFpage, on_delete=models.CASCADE)

@@ -4,7 +4,8 @@ from accounts.models import User
 class originPDF(models.Model):
     user_id = models.ForeignKey(User, on_delete=models.CASCADE)
     title = models.CharField(max_length=100)
-    S3_url = models.CharField(max_length=300)
+    S3_url = models.URLField()
+    s3_key = models.CharField(max_length=150, null=True, blank=True, default=None)
     created_at = models.DateTimeField(auto_now_add=True)
     
     def __str__(self):

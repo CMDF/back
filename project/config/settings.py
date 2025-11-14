@@ -109,7 +109,7 @@ WSGI_APPLICATION = 'config.wsgi.application'
 AUTH_USER_MODEL = 'accounts.User'
 
 
-# Database (로컬 테스트 용)
+# Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 RDS_HOST = get_secret("RDS_HOST")
 RDS_PORT = get_secret("RDS_PORT")

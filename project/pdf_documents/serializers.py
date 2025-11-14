@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import originPDF
+from .models import originPDF, PDFpage, MatchedText
 
 class OriginPDFSerializer(serializers.ModelSerializer):
     class Meta:
@@ -11,3 +11,17 @@ class OriginPDFSerializer(serializers.ModelSerializer):
 class PDFUploadSerializer(serializers.Serializer):
     title = serializers.CharField(required=False, allow_blank=True)
     file = serializers.FileField()  # multipart/form-data 의 file
+
+
+class PDFpageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PDFpage
+        fields = ['id', 'pdf_id', 'page_num', 'text']
+        read_only_fields = ['id']
+
+
+class MatchedTextSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = MatchedText
+        fields = ['id', 'page_id', 'figure_id', 'page_num', 'raw_text', 'matched_text']
+        read_only_fields = ['id']

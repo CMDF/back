@@ -12,7 +12,7 @@ class originPDF(models.Model):
 
 class PDFpage(models.Model):
     pdf_id = models.ForeignKey(originPDF, on_delete=models.CASCADE)
-    page_number = models.IntegerField()
+    page_num = models.IntegerField()
     text = models.TextField()
     
     def __str__(self):

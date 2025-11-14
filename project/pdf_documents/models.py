@@ -8,3 +8,12 @@ class originPDF(models.Model):
     
     def __str__(self):
         return self.title
+    
+
+class PDFpage(models.Model):
+    pdf_id = models.ForeignKey(originPDF, on_delete=models.CASCADE)
+    page_number = models.IntegerField()
+    text = models.TextField()
+    
+    def __str__(self):
+        return f"PDF: {self.pdf_id.title} - Page: {self.page_number}"

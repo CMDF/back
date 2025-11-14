@@ -111,29 +111,29 @@ AUTH_USER_MODEL = 'accounts.User'
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
-RDS_HOST = get_secret("RDS_HOST")
-RDS_PORT = get_secret("RDS_PORT")
-RDS_DB_NAME = get_secret("RDS_DB_NAME")
-RDS_USERNAME = get_secret("RDS_USERNAME")
-RDS_PASSWORD = get_secret("RDS_PASSWORD")
-DATABASES = {
-	'default': {
-		'ENGINE': 'django.db.backends.mysql',
-		'NAME': RDS_DB_NAME,
-		'USER': RDS_USERNAME,
-		'PASSWORD': RDS_PASSWORD,
-		'HOST': RDS_HOST,
-		'PORT': RDS_PORT,
-	}
-}
+# RDS_HOST = get_secret("RDS_HOST")
+# RDS_PORT = get_secret("RDS_PORT")
+# RDS_DB_NAME = get_secret("RDS_DB_NAME")
+# RDS_USERNAME = get_secret("RDS_USERNAME")
+# RDS_PASSWORD = get_secret("RDS_PASSWORD")
+# DATABASES = {
+# 	'default': {
+# 		'ENGINE': 'django.db.backends.mysql',
+# 		'NAME': RDS_DB_NAME,
+# 		'USER': RDS_USERNAME,
+# 		'PASSWORD': RDS_PASSWORD,
+# 		'HOST': RDS_HOST,
+# 		'PORT': RDS_PORT,
+# 	}
+# }
 
 # 로컬 테스트용
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
+}
 
 
 # Password validation
@@ -303,6 +303,7 @@ AWS_S3_OBJECT_PARAMETERS = {
     'CacheControl': 'max-age=86400',
 }
 
+OCR_SERVER = get_secret("OCR_SERVER")
 
 SWAGGER_SETTINGS = {
     "SECURITY_DEFINITIONS": {

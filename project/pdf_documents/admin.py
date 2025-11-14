@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import originPDF
+from .models import originPDF, PDFpage, MatchedText
 
 @admin.register(originPDF)
 class OriginPDFAdmin(admin.ModelAdmin):
@@ -17,3 +17,17 @@ class OriginPDFAdmin(admin.ModelAdmin):
     
     # 생성일 기준 내림차순 정렬
     ordering = ('-created_at',)
+
+@admin.register(PDFpage)
+class PDFpageAdmin(admin.ModelAdmin):
+    list_display = ('id', 'pdf_id', 'page_num')
+    list_display_links = ('id', 'pdf_id')
+    search_fields = ('pdf_id__title',)
+    ordering = ('pdf_id', 'page_num')
+
+@admin.register(MatchedText)
+class MatchedTextAdmin(admin.ModelAdmin):
+    list_display = ('id', 'page_id', 'figure_id', 'page_num')
+    list_display_links = ('id', 'page_id')
+    search_fields = ('page_id__pdf_id__title', 'figure_id__id')
+    ordering = ('page_id', 'page_num')

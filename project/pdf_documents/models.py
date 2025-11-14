@@ -1,6 +1,6 @@
 from django.db import models
 from accounts.models import User
-from pdf_figures.models import PDFfigure
+
 class originPDF(models.Model):
     user_id = models.ForeignKey(User, on_delete=models.CASCADE)
     title = models.CharField(max_length=100)
@@ -21,7 +21,7 @@ class PDFpage(models.Model):
     
 class MatchedText(models.Model):
     page_id = models.ForeignKey(PDFpage, on_delete=models.CASCADE)
-    figure_id = models.ForeignKey(PDFfigure, on_delete=models.CASCADE)
+    figure_id = models.ForeignKey('pdf_figures.PDFfigure', on_delete=models.CASCADE)
     page_num = models.IntegerField()
     raw_text = models.TextField()
     matched_text = models.TextField()

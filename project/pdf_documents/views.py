@@ -137,7 +137,25 @@ class PDFwithOCRView(APIView):
     2) OCR 서버 호출
     3) pages / figures / matches 를 DB에 저장
     """
-
+    @swagger_auto_schema(
+        operation_summary="PDF OCR 처리 및 DB 저장",
+        operation_description=(
+            "지정한 PDF에 대해 S3 presigned URL을 생성하고 OCR 서버에 전달하여\n"
+            "분석된 결과를 pages, figures, matches 테이블에 저장합니다.\n"
+            "- 인증: Authorization: Bearer <access_token>"
+        ),
+        responses = {
+            201: openapi.Response("description='OCR 처리 및 DB 저장 완료'", schema=openapi.Schema(
+                type=openapi.TYPE_OBJECT,
+                properties={
+                    'detail': openapi.Schema(type=openapi.TYPE_STRING, description='상세 메시지'),
+                    'pdf_id': openapi.Schema(type=openapi.TYPE_INTEGER, description='처리된 PDF ID'),
+                    'pages_created': openapi.Schema(type=openapi.TYPE_INTEGER, description='생성된 페이지 수'),
+                    'figures_created': openapi.Schema(type=openapi.TYPE_INTEGER, description='생성된 그림 수'),
+                }
+            )),
+        }
+    )
     def post(self, request, pdf_id, *args, **kwargs):
         # 0) originPDF 조회
         try:

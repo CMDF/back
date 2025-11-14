@@ -352,9 +352,17 @@ class PDFwithOCRView(APIView):
 
                 page_obj = page_objs[text_page_num]
 
+                # figure_obj = None
+                # if figure_page_num is not None and isinstance(box_list, list):
+                #     figure_obj = figure_map.get((figure_page_num, tuple(box_list)))
                 figure_obj = None
                 if figure_page_num is not None and isinstance(box_list, list):
-                    figure_obj = figure_map.get((figure_page_num, tuple(box_list)))
+                    key = tuple(box_list)
+                    figure_obj = (
+                        figure_map.get((figure_page_num, key)) or        # 0-based일 가능성
+                        figure_map.get((figure_page_num + 1, key)) or    # 1-based일 가능성
+                        figure_map.get((figure_page_num - 1, key))       # 안전빵 백업
+                    )
 
                 # figure_id 가 null 허용이 아니므로 못 찾으면 스킵
                 if figure_obj is None:
@@ -388,6 +396,7 @@ class PDFwithOCRView(APIView):
                 "pdf_id": origin_pdf.id,
                 "pages_created": len(page_objs),
                 "figures_created": len(figure_map),
+                "matches_created": MatchedText.objects.filter(page_id__pdf_id=origin_pdf).count(),
             },
             status=status.HTTP_201_CREATED
         )

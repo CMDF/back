@@ -104,7 +104,8 @@ class PDFUploadView(APIView):
             origin_pdf = originPDF.objects.create(
                 user_id=request.user,   # IsAuthenticated 전제. 비로그인 접근이면 FK 오류 가능
                 title=title,
-                S3_url=s3_url
+                S3_url=s3_url,
+                s3_key=key
             )
         except Exception as e:
             # DB 실패 시, 업로드된 객체를 정리하고 싶다면 아래 주석 해제(선택)

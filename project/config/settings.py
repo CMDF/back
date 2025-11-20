@@ -259,8 +259,8 @@ SOCIALACCOUNT_PROVIDERS = {
     'google': {
         'APP': {
             # 🔑 이 부분은 secrets.json에서 불러오도록 수정하세요.
-            'client_id': get_secret("GOOGLE_CLIENT_ID"),
-            'secret': get_secret("GOOGLE_CLIENT_SECRET"),
+            'client_id': get_secret("GOOGLE_CLIENT_ID_WEB"),
+            'secret': get_secret("GOOGLE_CLIENT_SECRET_WEB"),
         },
         'SCOPE': [ # Google로부터 요청할 사용자 정보 범위
             'openid',

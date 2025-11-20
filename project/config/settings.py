@@ -80,6 +80,7 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     #'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'config.middleware.APILoggingMiddleware',  # 커스텀 API 로깅 미들웨어 추가
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     "allauth.account.middleware.AccountMiddleware", # allauth 미들웨어
@@ -316,3 +317,72 @@ SWAGGER_SETTINGS = {
     },
     "USE_SESSION_AUTH": False,  # 세션 인증 버튼 비표시 (JWT만 쓸 때 권장)
 }
+
+
+
+# --- 로깅 설정 시작 ---
+
+LOG_DIR = BASE_DIR / "logs"
+
+try:
+    LOG_DIR.mkdir(parents=True, exist_ok=True)
+except Exception as e:
+    # 디렉토리 생성 실패 시, 파일 로그 없이 콘솔 로그만 쓰도록 fallback
+    LOG_DIR = None
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+
+    "formatters": {
+        "verbose": {
+            "format": "[{asctime}] [{levelname}] [{name}] {message}",
+            "style": "{",
+        },
+    },
+
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+            "formatter": "verbose",
+        },
+        # 여기서 LOG_DIR 이 있을 때만 파일 핸들러 추가
+        **(
+            {
+                "api_file": {
+                    "class": "logging.handlers.TimedRotatingFileHandler",
+                    "filename": str(LOG_DIR / "api.log"),
+                    "when": "midnight",
+                    "backupCount": 7,
+                    "encoding": "utf-8",
+                    "formatter": "verbose",
+                }
+            }
+            if LOG_DIR is not None
+            else {}
+        ),
+    },
+
+    "loggers": {
+        # 우리가 직접 쓰는 API 로거
+        "api": {
+            "handlers": ["console", "api_file"],
+            "level": "INFO",    # 개발 중이라면 DEBUG로 내려도 됨
+            "propagate": False,
+        },
+
+        # 기본 django 로그(경고 이상만)
+        "django": {
+            "handlers": ["console"],
+            "level": "WARNING",
+            "propagate": True,
+        },
+        "django.request": {
+            "handlers": ["console"],
+            "level": "ERROR",
+            "propagate": False,
+        },
+    },
+}
+
+# --- 로깅 설정 끝 ---

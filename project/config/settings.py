@@ -323,7 +323,12 @@ SWAGGER_SETTINGS = {
 # --- 로깅 설정 시작 ---
 
 LOG_DIR = BASE_DIR / "logs"
-LOG_DIR.mkdir(exist_ok=True)
+
+try:
+    LOG_DIR.mkdir(parents=True, exist_ok=True)
+except Exception as e:
+    # 디렉토리 생성 실패 시, 파일 로그 없이 콘솔 로그만 쓰도록 fallback
+    LOG_DIR = None
 
 LOGGING = {
     "version": 1,
@@ -341,14 +346,21 @@ LOGGING = {
             "class": "logging.StreamHandler",
             "formatter": "verbose",
         },
-        "api_file": {
-            "class": "logging.handlers.TimedRotatingFileHandler",
-            "filename": str(LOG_DIR / "api.log"),
-            "when": "midnight",          # 매일 자정에 로그 파일 회전
-            "backupCount": 7,            # 7일 보관
-            "encoding": "utf-8",
-            "formatter": "verbose",
-        },
+        # 여기서 LOG_DIR 이 있을 때만 파일 핸들러 추가
+        **(
+            {
+                "api_file": {
+                    "class": "logging.handlers.TimedRotatingFileHandler",
+                    "filename": str(LOG_DIR / "api.log"),
+                    "when": "midnight",
+                    "backupCount": 7,
+                    "encoding": "utf-8",
+                    "formatter": "verbose",
+                }
+            }
+            if LOG_DIR is not None
+            else {}
+        ),
     },
 
     "loggers": {

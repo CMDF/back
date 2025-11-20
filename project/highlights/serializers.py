@@ -10,5 +10,5 @@ class TagSerializer(serializers.ModelSerializer):
 class HighlightSerializer(serializers.ModelSerializer):
     class Meta:
         model = Highlight
-        fields = ['id', 'page_id', 'start_index', 'Tag_id', 'highlight_text', 'highlight_box']
+        fields = ['id', 'page_id', 'Tag_id', 'highlight_text', 'highlight_box']
         read_only_fields = ['id', 'created_at']

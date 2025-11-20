@@ -80,6 +80,7 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     #'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'config.middleware.APILoggingMiddleware',  # 커스텀 API 로깅 미들웨어 추가
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     "allauth.account.middleware.AccountMiddleware", # allauth 미들웨어
@@ -316,3 +317,60 @@ SWAGGER_SETTINGS = {
     },
     "USE_SESSION_AUTH": False,  # 세션 인증 버튼 비표시 (JWT만 쓸 때 권장)
 }
+
+
+
+# --- 로깅 설정 시작 ---
+
+LOG_DIR = BASE_DIR / "logs"
+LOG_DIR.mkdir(exist_ok=True)
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+
+    "formatters": {
+        "verbose": {
+            "format": "[{asctime}] [{levelname}] [{name}] {message}",
+            "style": "{",
+        },
+    },
+
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+            "formatter": "verbose",
+        },
+        "api_file": {
+            "class": "logging.handlers.TimedRotatingFileHandler",
+            "filename": str(LOG_DIR / "api.log"),
+            "when": "midnight",          # 매일 자정에 로그 파일 회전
+            "backupCount": 7,            # 7일 보관
+            "encoding": "utf-8",
+            "formatter": "verbose",
+        },
+    },
+
+    "loggers": {
+        # 우리가 직접 쓰는 API 로거
+        "api": {
+            "handlers": ["console", "api_file"],
+            "level": "INFO",    # 개발 중이라면 DEBUG로 내려도 됨
+            "propagate": False,
+        },
+
+        # 기본 django 로그(경고 이상만)
+        "django": {
+            "handlers": ["console"],
+            "level": "WARNING",
+            "propagate": True,
+        },
+        "django.request": {
+            "handlers": ["console"],
+            "level": "ERROR",
+            "propagate": False,
+        },
+    },
+}
+
+# --- 로깅 설정 끝 ---

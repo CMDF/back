@@ -144,6 +144,7 @@ class PDFwithOCRView(APIView):
             "분석된 결과를 pages, figures, matches 테이블에 저장합니다.\n"
             "- 인증: Authorization: Bearer <access_token>"
         ),
+        tags=["PDF Documents"],
         responses = {
             201: openapi.Response("description='OCR 처리 및 DB 저장 완료'", schema=openapi.Schema(
                 type=openapi.TYPE_OBJECT,

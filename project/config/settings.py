@@ -226,6 +226,7 @@ REST_AUTH = {
     "JWT_AUTH_REFRESH_COOKIE": "refresh_token",
     "JWT_AUTH_HTTPONLY": False,
     # 필요하면 여기에 다른 옵션들도 REST_AUTH 안에 넣습니다.
+    "LOGOUT_VIEW_CLASS": "accounts.views.LogoutView",
 }
 
 

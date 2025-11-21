@@ -25,3 +25,10 @@ class MatchedTextSerializer(serializers.ModelSerializer):
         model = MatchedText
         fields = ['id', 'page_id', 'figure_id', 'page_num', 'raw_text', 'matched_text']
         read_only_fields = ['id']
+
+class MatchedTextDataGetSerializer(serializers.ModelSerializer):
+    pdf_id = serializers.IntegerField(source='page_id.pdf_id.id', read_only=True)
+
+    class Meta:
+        model = MatchedText
+        fields = ['id', 'pdf_id', 'page_id', 'figure_id', 'page_num', 'raw_text', 'matched_text']

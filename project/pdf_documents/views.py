@@ -2,7 +2,7 @@
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import permissions
+from rest_framework.permissions import IsAuthenticated
 from django.db import transaction
 import requests
 from rest_framework import status
@@ -15,7 +15,7 @@ import os
 import uuid
 import json
 
-from .serializers import OriginPDFSerializer, PDFUploadSerializer
+from .serializers import OriginPDFSerializer, PDFUploadSerializer, MatchedTextDataGetSerializer
 from .models import originPDF, PDFpage, MatchedText
 
 from pdf_figures.serializers import PDFfigureSerializer
@@ -401,3 +401,36 @@ class PDFwithOCRView(APIView):
             },
             status=status.HTTP_201_CREATED
         )
+    
+
+class MatchedTextListView(APIView):
+    """
+    특정 originPDF(pdf_id)에 대한 MatchedText 목록 조회
+    """
+    permission_classes = [IsAuthenticated]
+
+    @swagger_auto_schema(
+        operation_summary="PDF의 MatchedText 목록 조회",
+        operation_description=(
+            "지정한 PDF에 대해 MatchedText 항목들의 목록을 조회합니다.\n"
+            "- 인증: Authorization: Bearer <access_token>"
+        ),
+        tags=["PDF Documents"],
+        responses={200: MatchedTextDataGetSerializer(many=True)},
+    )
+    def get(self, request, pdf_id, *args, **kwargs):
+        # 1) originPDF 조회
+        try:
+            origin_pdf = originPDF.objects.get(id=pdf_id, user_id=request.user)
+        except originPDF.DoesNotExist:
+            return Response(
+                {"detail": "해당 PDF를 찾을 수 없습니다."},
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+        # 2) MatchedText 조회
+        matched_texts = MatchedText.objects.filter(page_id__pdf_id=origin_pdf).select_related('page_id', 'figure_id')
+
+        # 3) 직렬화 및 응답
+        serializer = MatchedTextDataGetSerializer(matched_texts, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)

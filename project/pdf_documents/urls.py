@@ -8,4 +8,5 @@ urlpatterns = [
     path("pdfs/<int:pdf_id>/ocr/", PDFwithOCRView.as_view(), name="pdf-ocr"),
     path("pdfs/<int:pdf_id>/matched-texts/", MatchedTextListView.as_view(), name="pdf-matched-texts"),
     path("pdfs/<int:pdf_id>", OriginPDFGetView.as_view(), name="pdf-origin-get"),
+    path("pdfs/<int:pdf_id>/pages/", PDFpageGetView.as_view(), name="pdf-pages-get"),
 ]

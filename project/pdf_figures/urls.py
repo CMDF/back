@@ -1,9 +1,8 @@
 from django.urls import path
-from . import views
+from .views import GetFiguresByOriginPDFAPIView
 
 app_name = "pdf_figures"
 
 urlpatterns = [
-    # 준비가 안 됐다면 일단 빈 리스트도 OK
-    # path("", views.some_view, name="index"),
+    path("figures/<int:pdf_id>/", GetFiguresByOriginPDFAPIView.as_view(), name="get_figures_by_origin_pdf"),
 ]

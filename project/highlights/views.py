@@ -120,7 +120,7 @@ class HighlightGetAPIView(APIView):
 
     @swagger_auto_schema(
         operation_id="getHighlights",
-        operation_description="PDF 페이지에 연결된 Highlight 목록을 조회합니다. ?page_id= 로 필터링 가능",
+        operation_description="PDF 페이지에 연결된 Highlight 목록을 조회합니다. ?page_id= 로 필터링 가능.\n 쿼리 파라미터가 없으면 모든 Highlight를 반환합니다.",
         tags=["Highlight"],
         responses={200: HighlightSerializer(many=True), 401: openapi.Response("Unauthorized")},
     )
@@ -169,3 +169,20 @@ class HighlightDetailAPIView(APIView):
             s.save()
             return Response(s.data, status=status.HTTP_200_OK)
         return Response(s.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+class GetHighlightByOriginPDFAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    @swagger_auto_schema(
+        operation_id="getHighlightsByPDF",
+        operation_description="특정 PDF(originPDF)의 pk를 기준으로 해당 PDF에 연결된 Highlight 목록을 조회합니다.",
+        tags=["Highlight"],
+        responses={
+            200: HighlightSerializer(many=True),
+            401: openapi.Response("Unauthorized"),
+        },
+    )
+    def get(self, request, pdf_id):
+        qs = Highlight.objects.filter(pdf_id=pdf_id)
+        serializer = HighlightSerializer(qs, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)

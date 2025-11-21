@@ -1,6 +1,6 @@
 # highlights/urls.py
 from django.urls import path
-from .views import TagListCreateAPIView, TagDetailAPIView, HighlightCreateAPIView, HighlightDetailAPIView
+from .views import TagListCreateAPIView, TagDetailAPIView, HighlightCreateAPIView, HighlightDetailAPIView, GetHighlightByOriginPDFAPIView
 
 app_name = "highlights"
 
@@ -9,4 +9,5 @@ urlpatterns = [
     path("tags/<int:pk>/", TagDetailAPIView.as_view(), name="tag_detail"),
     path("highlight/", HighlightCreateAPIView.as_view(), name="highlight_create"),
     path("highlight/<int:pk>/", HighlightDetailAPIView.as_view(), name="highlight_detail"),
+    path("highlights/<int:pdf_id>/", GetHighlightByOriginPDFAPIView.as_view(), name="get_highlights_by_origin_pdf"),
 ]

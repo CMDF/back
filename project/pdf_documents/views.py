@@ -402,7 +402,6 @@ class PDFwithOCRView(APIView):
             status=status.HTTP_201_CREATED
         )
     
-
 class MatchedTextListView(APIView):
     """
     특정 originPDF(pdf_id)에 대한 MatchedText 목록 조회
@@ -433,4 +432,33 @@ class MatchedTextListView(APIView):
 
         # 3) 직렬화 및 응답
         serializer = MatchedTextDataGetSerializer(matched_texts, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+class OriginPDFGetView(APIView):
+    """
+    특정 originPDF(pdf_id)에 대한 메타데이터 조회
+    """
+    permission_classes = [IsAuthenticated]
+
+    @swagger_auto_schema(
+        operation_summary="PDF 메타데이터 조회",
+        operation_description=(
+            "지정한 PDF에 대한 메타데이터를 조회합니다.\n"
+            "- 인증: Authorization: Bearer <access_token>"
+        ),
+        tags=["PDF Documents"],
+        responses={200: OriginPDFSerializer},
+    )
+    def get(self, request, pdf_id, *args, **kwargs):
+        # 1) originPDF 조회
+        try:
+            origin_pdf = originPDF.objects.get(id=pdf_id, user_id=request.user)
+        except originPDF.DoesNotExist:
+            return Response(
+                {"detail": "해당 PDF를 찾을 수 없습니다."},
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+        # 2) 직렬화 및 응답
+        serializer = OriginPDFSerializer(origin_pdf)
         return Response(serializer.data, status=status.HTTP_200_OK)

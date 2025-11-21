@@ -6,10 +6,10 @@ from django.urls import path
 from rest_framework_simplejwt.views import TokenVerifyView, TokenRefreshView
 
 # 🚨 [수정] LogoutView는 dj_rest_auth에서 가져옵니다.
-from dj_rest_auth.views import LogoutView 
+#from dj_rest_auth.views import LogoutView 
 
 # 🚨 MeView와 GoogleLogin은 accounts.views에서 가져옵니다.
-from .views import MeView, GoogleLogin
+from .views import MeView, GoogleLogin, LogoutView
 
 app_name = "accounts"
 

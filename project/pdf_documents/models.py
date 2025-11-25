@@ -10,7 +10,6 @@ class originPDF(models.Model):
     
     def __str__(self):
         return self.title
-    
 
 class PDFpage(models.Model):
     pdf_id = models.ForeignKey(originPDF, on_delete=models.CASCADE)
@@ -26,6 +25,7 @@ class MatchedText(models.Model):
     page_num = models.IntegerField()
     raw_text = models.TextField()
     matched_text = models.TextField()
+    text_box = models.JSONField(null=True, blank=True)  # { "min_x": ~, "min_y": ~, "max_x": ~, "max_y": ~  }, etc ~
 
     def __str__(self):
         return f"Matched Text on Page: {self.page_id.page_num} for Figure ID: {self.figure_id.id}"

@@ -309,16 +309,6 @@ class PDFwithOCRView(APIView):
                 status=status.HTTP_502_BAD_GATEWAY
             )
 
-        # if ocr_response.status_code != 200:
-        #     return Response(
-        #         {
-        #             "detail": "OCR 서버가 요청을 처리하지 못했습니다.",
-        #             "ocr_status": ocr_response.status_code,
-        #             "ocr_raw": ocr_response.text,   # 여기에 서버 에러 메시지 그대로 찍힘
-        #         },
-        #         status=status.HTTP_502_BAD_GATEWAY
-        #     )
-
         # ✅ 1) 200, 201 둘 다 성공으로 취급
         if ocr_response.status_code not in (200, 201):
             return Response(
@@ -429,6 +419,7 @@ class PDFwithOCRView(APIView):
                 text_page_num = m.get("page_num")       # 텍스트 페이지 번호
                 figure_page_num = m.get("figure_page")  # 그림이 있는 페이지 번호
                 box_list = m.get("figure_box", [])
+                text_box_list = m.get("text_box", {})
 
                 if text_page_num not in page_objs:
                     # 해당 텍스트 페이지가 없으면 스킵
@@ -465,12 +456,23 @@ class PDFwithOCRView(APIView):
                 else:
                     matched_text = str(figure_text_list)
 
+                if isinstance(text_box_list, list) and len(text_box_list) == 4:
+                    text_box = {
+                        "min_x": text_box_list[0],
+                        "min_y": text_box_list[1],
+                        "max_x": text_box_list[2],
+                        "max_y": text_box_list[3],
+                    }
+                else:
+                    text_box = text_box_list
+
                 MatchedText.objects.create(
                     page_id=page_obj,
                     figure_id=figure_obj,
                     page_num=text_page_num,
                     raw_text=raw_text,
                     matched_text=matched_text,
+                    text_box=text_box,
                 )
 
         # 4) 최종 응답 (필요하면 counts 나 상세 serializer 로 바꿔도 됨)

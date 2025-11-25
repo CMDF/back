@@ -129,6 +129,89 @@ class PDFUploadView(APIView):
         serializer = OriginPDFSerializer(origin_pdf)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     
+class PDFDeleteView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    @swagger_auto_schema(
+        operation_summary="PDF 삭제",
+        operation_description=(
+            "S3에 업로드된 PDF 파일과 DB에 저장된 originPDF 레코드를 삭제합니다.\n"
+            "- HTTP Method: DELETE\n"
+            "- Path Parameter: `id` (originPDF의 PK)\n"
+            "- 인증: Authorization: Bearer <access_token>\n\n"
+            "주어진 `id`를 가진 PDF가 현재 로그인한 사용자 소유인지 확인한 뒤,\n"
+            "S3 객체를 삭제하고, DB 레코드를 제거합니다."
+        ),
+        tags=["PDF Documents"],
+        security=[{"Bearer": []}],
+        manual_parameters=[
+            openapi.Parameter(
+                "id",
+                openapi.IN_PATH,
+                description="삭제할 originPDF의 ID",
+                type=openapi.TYPE_INTEGER,
+            )
+        ],
+        responses={
+            204: "삭제 완료",
+            400: "잘못된 요청",
+            403: "권한 없음 / S3 삭제 권한 문제",
+            404: "해당 PDF 없음",
+            502: "S3 통신 오류",
+        },
+    )
+    def delete(self, request, id, *args, **kwargs):
+        # 1) 해당 유저의 PDF인지 확인
+        try:
+            pdf_obj = originPDF.objects.get(id=id, user_id=request.user)
+        except originPDF.DoesNotExist:
+            return Response(
+                {"detail": "해당 PDF를 찾을 수 없습니다."},
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+        s3_key = pdf_obj.s3_key  # 업로드할 때 저장해둔 Key (예: "pdfs/uuid.pdf")
+        bucket = settings.AWS_STORAGE_BUCKET_NAME
+
+        # 2) S3 클라이언트 생성 (업로드 때와 동일하게)
+        s3 = boto3.client(
+            "s3",
+            region_name=settings.AWS_REGION,
+            aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
+            aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
+        )
+
+        # 3) S3 객체 삭제 시도
+        if s3_key:
+            try:
+                s3.delete_object(Bucket=bucket, Key=s3_key)
+            except ClientError as e:
+                code = e.response.get("Error", {}).get("Code")
+                msg = e.response.get("Error", {}).get("Message")
+
+                # 객체가 원래 없었던 경우(NoSuchKey 등)는 용량도 안 쓰고 있는 상태이므로
+                # 그냥 DB만 지우고 성공 처리해도 됨.
+                if code not in ("NoSuchKey", "NotFound"):
+                    return Response(
+                        {
+                            "detail": "S3 객체 삭제에 실패했습니다.",
+                            "error_code": code,
+                            "error_message": msg,
+                            "hint": "IAM 권한, 버킷 정책을 확인하세요.",
+                        },
+                        status=(
+                            status.HTTP_403_FORBIDDEN
+                            if code in ("AccessDenied",)
+                            else status.HTTP_502_BAD_GATEWAY
+                        ),
+                    )
+
+        # 4) DB 레코드 삭제 (연관된 PDFpage, MatchedText, PDFfigure가
+        # on_delete=models.CASCADE라면 같이 삭제됨)
+        pdf_obj.delete()
+
+        # 보통 리소스 삭제는 204 No Content
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 class PDFwithOCRView(APIView):
     """

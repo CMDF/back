@@ -31,4 +31,4 @@ class MatchedTextDataGetSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = MatchedText
-        fields = ['id', 'pdf_id', 'page_id', 'figure_id', 'page_num', 'raw_text', 'matched_text']
+        fields = ['id', 'pdf_id', 'page_id', 'figure_id', 'page_num', 'raw_text', 'matched_text', 'text_box']

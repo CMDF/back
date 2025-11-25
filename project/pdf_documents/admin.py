@@ -27,7 +27,7 @@ class PDFpageAdmin(admin.ModelAdmin):
 
 @admin.register(MatchedText)
 class MatchedTextAdmin(admin.ModelAdmin):
-    list_display = ('id', 'page_id', 'figure_id', 'page_num')
+    list_display = ('id', 'page_id', 'figure_id', 'page_num', 'raw_text', 'matched_text', 'text_box')
     list_display_links = ('id', 'page_id')
     search_fields = ('page_id__pdf_id__title', 'figure_id__id')
     ordering = ('page_id', 'page_num')

@@ -23,7 +23,7 @@ class PDFpageSerializer(serializers.ModelSerializer):
 class MatchedTextSerializer(serializers.ModelSerializer):
     class Meta:
         model = MatchedText
-        fields = ['id', 'page_id', 'figure_id', 'page_num', 'raw_text', 'matched_text']
+        fields = ['id', 'page_id', 'figure_id', 'page_num', 'raw_text', 'matched_text', 'text_box']
         read_only_fields = ['id']
 
 class MatchedTextDataGetSerializer(serializers.ModelSerializer):

@@ -10,4 +10,5 @@ urlpatterns = [
     path("pdfs/<int:pdf_id>/matched-texts/", MatchedTextListView.as_view(), name="pdf-matched-texts"),
     path("pdfs/<int:pdf_id>", OriginPDFGetView.as_view(), name="pdf-origin-get"),
     path("pdfs/<int:pdf_id>/pages/", PDFpageGetView.as_view(), name="pdf-pages-get"),
+    path("all/", UserPDFDataView.as_view(), name="user-all-data"),
 ]

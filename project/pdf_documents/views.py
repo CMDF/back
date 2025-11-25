@@ -25,7 +25,7 @@ from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 
 class PDFUploadView(APIView):
-    # ★ multipart/form-data 파싱 필수
+    # multipart/form-data 파싱 필수
     parser_classes = [MultiPartParser, FormParser]
 
     @swagger_auto_schema(
@@ -56,7 +56,7 @@ class PDFUploadView(APIView):
         # 2) S3 클라이언트 (settings에서 일관되게 가져오기)
         s3 = boto3.client(
             "s3",
-            region_name=settings.AWS_REGION,                # ← settings.py에서 정의한 AWS_REGION 사용
+            region_name=settings.AWS_REGION,                # settings.py에서 정의한 AWS_REGION 사용
             aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
             aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
         )
@@ -309,7 +309,7 @@ class PDFwithOCRView(APIView):
                 status=status.HTTP_502_BAD_GATEWAY
             )
 
-        # ✅ 1) 200, 201 둘 다 성공으로 취급
+        # 1) 200, 201 둘 다 성공으로 취급
         if ocr_response.status_code not in (200, 201):
             return Response(
                 {
@@ -320,7 +320,7 @@ class PDFwithOCRView(APIView):
                 status=status.HTTP_502_BAD_GATEWAY
             )
 
-        # ✅ 2) 첫 번째 파싱 (여기서 str 이 나옴)
+        # 2) 첫 번째 파싱 (여기서 str 이 나옴)
         try:
             data = ocr_response.json()
         except ValueError:
@@ -332,7 +332,7 @@ class PDFwithOCRView(APIView):
                 status=status.HTTP_502_BAD_GATEWAY
             )
 
-        # ✅ 3) OCR 서버가 JSON 문자열을 한 번 더 감싸서 보내므로,
+        # 3) OCR 서버가 JSON 문자열을 한 번 더 감싸서 보내므로,
         #      str 이면 한 번 더 json.loads() 해서 dict 로 만든다
         if isinstance(data, str):
             try:
@@ -346,7 +346,7 @@ class PDFwithOCRView(APIView):
                     status=status.HTTP_502_BAD_GATEWAY
                 )
 
-        # ✅ 4) 최종적으로 dict 가 아니면 에러
+        # 4) 최종적으로 dict 가 아니면 에러
         if not isinstance(data, dict):
             return Response(
                 {
@@ -578,4 +578,29 @@ class PDFpageGetView(APIView):
 
         # 3) 직렬화 및 응답
         serializer = PDFpageSerializer(pdf_pages, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+
+class UserPDFDataView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    @swagger_auto_schema(
+        operation_summary="사용자 소유 PDF 목록 조회",
+        operation_description=(
+            "현재 로그인한 사용자가 소유한 모든 originPDF 항목들의 목록을 조회합니다.\n"
+            "- 인증: Authorization: Bearer <access_token>"
+        ),
+        tags=["PDF Documents"],
+        responses={200: OriginPDFSerializer(many=True)},
+    )
+    def get(self, request):
+        # 1. 현재 로그인한 유저 가져오기
+        user = request.user
+        
+        # 2. 해당 유저가 소유한 PDF만 필터링 (가장 최신순으로 정렬하고 싶다면 order_by 추가)
+        pdfs = originPDF.objects.filter(user_id=user).order_by('-created_at')
+        
+        # 3. 기존에 만들어둔 가벼운 Serializer 사용
+        serializer = OriginPDFSerializer(pdfs, many=True)
+        
         return Response(serializer.data, status=status.HTTP_200_OK)

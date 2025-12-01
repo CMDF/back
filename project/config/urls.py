@@ -25,6 +25,7 @@ urlpatterns = [
     path("highlights/", include("highlights.urls")),
     path("pdf_documents/", include("pdf_documents.urls")),
     path("pdf_figures/", include("pdf_figures.urls")),
+    path("chatbots/", include("chatbots.urls")),
 
     # Swagger / OpenAPI
     path("swagger/", schema_view.with_ui("swagger", cache_timeout=0), name="schema-swagger-ui"),

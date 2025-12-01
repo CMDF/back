@@ -45,7 +45,8 @@ PROJECT_APPS = [
     'accounts',
     'pdf_documents',
     'pdf_figures',
-    'highlights'
+    'highlights',
+    'chatbots',
 ]
 
 THIRD_PARTY_APPS = [
@@ -387,3 +388,5 @@ LOGGING = {
 }
 
 # --- 로깅 설정 끝 ---
+
+UPSTAGE_API_KEY = get_secret("UPSTAGE_API_KEY")

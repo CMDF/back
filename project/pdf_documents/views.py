@@ -25,7 +25,7 @@ from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 
 class PDFUploadView(APIView):
-    # multipart/form-data 파싱 필수
+
     parser_classes = [MultiPartParser, FormParser]
 
     @swagger_auto_schema(
@@ -272,7 +272,7 @@ class PDFwithOCRView(APIView):
             presigned_url = s3.generate_presigned_url(
                 ClientMethod="get_object",
                 Params={"Bucket": bucket, "Key": key},
-                ExpiresIn=300,  # 5분
+                ExpiresIn=900,  # 15분
             )
         except Exception as e:
             return Response(

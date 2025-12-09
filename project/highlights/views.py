@@ -10,23 +10,6 @@ from .serializers import TagSerializer, HighlightSerializer
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 
-# # 공통 헤더 파라미터 (JWT)
-# auth_header = openapi.Parameter(
-#     name="Authorization",
-#     in_=openapi.IN_HEADER,
-#     description='JWT 토큰. 예) "Bearer <access_token>"',
-#     type=openapi.TYPE_STRING,
-#     required=True,
-# )
-# # pk path 파라미터 (디테일 전용)
-# pk_param = openapi.Parameter(
-#     name="pk",
-#     in_=openapi.IN_PATH,
-#     description="Tag 기본키(ID)",
-#     type=openapi.TYPE_INTEGER,
-#     required=True,
-# )
-
 class TagListCreateAPIView(APIView):
     permission_classes = [IsAuthenticated]
 

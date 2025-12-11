@@ -292,7 +292,7 @@ class PDFwithOCRView(APIView):
             ocr_response = requests.post(
                 ocr_endpoint,
                 json=payload,
-                timeout=180,
+                timeout=1200,
             )
             ocr_response.raise_for_status()
         except requests.exceptions.RequestException as e:

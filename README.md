@@ -209,3 +209,11 @@ python -c "from django.core.management.utils import get_random_secret_key; print
 
 - `secrets.json`은 민감 정보가 포함되므로 Git에 커밋하지 않는 것을 권장합니다. (예: `.gitignore`에 추가)
 - 운영 환경에서는 가능하면 AWS Parameter Store/Secrets Manager 또는 환경변수 기반으로 분리하는 구성이 안전합니다.
+
+## ERD
+
+![ERD](readme_assets/capstone_ERD.png)
+
+## Architecture
+
+![Architecture](readme_assets/capstone_architecture.png)

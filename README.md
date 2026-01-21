@@ -1,4 +1,4 @@
-# CMD_F Backend (Django)
+# DOCent Backend (Django)
 
 CAU 캡스톤디자인 프로젝트의 Django 백엔드 레포지토리입니다.
 

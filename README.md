@@ -217,3 +217,14 @@ python -c "from django.core.management.utils import get_random_secret_key; print
 ## Architecture
 
 ![Architecture](readme_assets/capstone_architecture.png)
+
+## 개선할 점
+
+1. Queue(Broker)을 이용한 비동기 처리 방식 도입
+
+- 사용자가 올린 PDF의 처리 시간이 5분을 넘어갈 경우 500 Error가 반환됨. (동기식의 한계)
+- Redis를 이용하여 Broker을 배치하고 Celery를 이용하여 비동기로 리팩토링 (GDG 프로젝트에서 연계)
+
+2. 과도한 트래픽 문제 (OCR 처리 용량 한계)
+
+- nginx 등과 같이 load balancer을 배치하여도 OCR 서버의 GPU 및 RAM resource 한계로 인해 해결이 힘들 것 같음.
